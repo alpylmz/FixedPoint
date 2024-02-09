@@ -3,6 +3,23 @@
 
 #include <stdint.h>
 
+#include <boost/multiprecision/cpp_int.hpp>
+#include <boost/multiprecision/cpp_dec_float.hpp>
+
+using int8_bt    = boost::multiprecision::number<boost::multiprecision::cpp_int_backend<8,    8,    boost::multiprecision::signed_magnitude, boost::multiprecision::unchecked, void>, boost::multiprecision::et_off>;
+using int16_bt   = boost::multiprecision::number<boost::multiprecision::cpp_int_backend<16,   16,   boost::multiprecision::signed_magnitude, boost::multiprecision::unchecked, void>, boost::multiprecision::et_off>;
+using int32_bt   = boost::multiprecision::number<boost::multiprecision::cpp_int_backend<32,   32,   boost::multiprecision::signed_magnitude, boost::multiprecision::unchecked, void>, boost::multiprecision::et_off>;
+using int64_bt   = boost::multiprecision::number<boost::multiprecision::cpp_int_backend<64,   64,   boost::multiprecision::signed_magnitude, boost::multiprecision::unchecked, void>, boost::multiprecision::et_off>;
+using int128_t  = boost::multiprecision::number<boost::multiprecision::cpp_int_backend<128,  128,  boost::multiprecision::signed_magnitude, boost::multiprecision::unchecked, void>, boost::multiprecision::et_off>;
+using int256_t  = boost::multiprecision::number<boost::multiprecision::cpp_int_backend<256,  256,  boost::multiprecision::signed_magnitude, boost::multiprecision::unchecked, void>, boost::multiprecision::et_off>;
+using int512_t  = boost::multiprecision::number<boost::multiprecision::cpp_int_backend<512,  512,  boost::multiprecision::signed_magnitude, boost::multiprecision::unchecked, void>, boost::multiprecision::et_off>;
+using int1024_t = boost::multiprecision::number<boost::multiprecision::cpp_int_backend<1024, 1024, boost::multiprecision::signed_magnitude, boost::multiprecision::unchecked, void>, boost::multiprecision::et_off>;
+using int2048_t = boost::multiprecision::number<boost::multiprecision::cpp_int_backend<2048, 2048, boost::multiprecision::signed_magnitude, boost::multiprecision::unchecked, void>, boost::multiprecision::et_off>;
+using int4096_t = boost::multiprecision::number<boost::multiprecision::cpp_int_backend<4096, 4096, boost::multiprecision::signed_magnitude, boost::multiprecision::unchecked, void>, boost::multiprecision::et_off>;
+using int8192_t = boost::multiprecision::number<boost::multiprecision::cpp_int_backend<8192, 8192, boost::multiprecision::signed_magnitude, boost::multiprecision::unchecked, void>, boost::multiprecision::et_off>;
+using max_int   = int8192_t;
+using bigfloat  = boost::multiprecision::cpp_dec_float_100;
+
 // This is a dummy type meaning that there are too many bits in the data type
 struct TooManyBits;
 
@@ -25,29 +42,54 @@ struct GET_INT_WITH_LENGTH
 template <>
 struct GET_INT_WITH_LENGTH<8>
 {
-    typedef int8_t RESULT;
+    typedef int8_bt RESULT;
 };
 
 template <>
 struct GET_INT_WITH_LENGTH<16>
 {
-    typedef int16_t RESULT;
+    typedef int16_bt RESULT;
 };
 
 template <>
 struct GET_INT_WITH_LENGTH<32>
 {
-    typedef int32_t RESULT;
+    typedef int32_bt RESULT;
 };
 
 template <>
 struct GET_INT_WITH_LENGTH<64>
 {
-    typedef int64_t RESULT;
+    typedef int64_bt RESULT;
 };
 
 template <>
 struct GET_INT_WITH_LENGTH<128>
+{
+    typedef int128_t RESULT;
+};
+
+template <>
+struct GET_INT_WITH_LENGTH<256>
+{
+    typedef int256_t RESULT;
+};
+
+template <>
+struct GET_INT_WITH_LENGTH<512>
+{
+    typedef int512_t RESULT;
+};
+
+template <>
+struct GET_INT_WITH_LENGTH<1024>
+{
+    typedef int1024_t RESULT;
+};
+
+
+template <>
+struct GET_INT_WITH_LENGTH<2048>
 {
     typedef TooManyBits RESULT;
 };
