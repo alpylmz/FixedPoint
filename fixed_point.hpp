@@ -108,10 +108,7 @@ public:
         applyMask();
     }
 
-    FixedPoint(RawValue value): raw_(value.value) {
-        mask = (((max_int)1 << (FRAC_BITS+INT_BITS)) - 1).convert_to<RawType>();
-        applyMask();
-    }
+    FixedPoint(RawValue value): raw_(value.value) { }
 
     void applyMask(){
         raw_ &= mask;
