@@ -2,7 +2,6 @@
 #include <fstream>
 
 #include "fixed_point.hpp"
-#include "bad.hpp"
 
 OverflowMode OVERFLOW_MODE = OverflowMode::CLAMP;
 
