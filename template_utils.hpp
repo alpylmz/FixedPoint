@@ -32,25 +32,25 @@ struct GET_INT_WITH_LENGTH
 template <>
 struct GET_INT_WITH_LENGTH<8>
 {
-    typedef int8_bt RESULT;
+    typedef int8_t RESULT;
 };
 
 template <>
 struct GET_INT_WITH_LENGTH<16>
 {
-    typedef int16_bt RESULT;
+    typedef int16_t RESULT;
 };
 
 template <>
 struct GET_INT_WITH_LENGTH<32>
 {
-    typedef int32_bt RESULT;
+    typedef int32_t RESULT;
 };
 
 template <>
 struct GET_INT_WITH_LENGTH<64>
 {
-    typedef int64_bt RESULT;
+    typedef int64_t RESULT;
 };
 
 template <>
