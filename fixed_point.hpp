@@ -269,13 +269,8 @@ public:
     // Multiplication with a double
     FixedPoint<INT_BITS, FRAC_BITS> operator *(double value) const
     {
-        // Firstly convert the double to a fixed point format
-        FixedPoint<INT_BITS, FRAC_BITS> temp(value);
-        // then multiply raws
-        auto temp2 = FixedPoint<INT_BITS*2, FRAC_BITS*2>::createRaw(raw_ * temp.getRaw());
-        //auto temp = FixedPoint<INT_BITS*2, FRAC_BITS*2>::createRaw(raw_ * value);
-        // Now we need to shift the radix point back to the original position
-        return temp2.template convert<INT_BITS, FRAC_BITS>();
+        auto temp = FixedPoint<INT_BITS*2, FRAC_BITS*2>::createRaw(raw_ * value);
+        return temp.template convert<INT_BITS, FRAC_BITS>();
     }
 
     // *= overload
@@ -555,7 +550,7 @@ public:
         typedef FixedPoint<INT_BITS, FRAC_BITS> ResultType;
         typedef typename GET_INT_WITH_LENGTH<INT_BITS*2 + FRAC_BITS*2>::RESULT IntermediateType;
 
-        IntermediateType int_frac((max_int)1 << FRAC_BITS);
+        IntermediateType int_frac(1 << FRAC_BITS);
 
         // Expand the dividend so we don't lose resolution
         IntermediateType intermediate(raw_ * int_frac);
@@ -563,10 +558,10 @@ public:
         // divisor, and INT_BITS2 adds the required resolution.
         //intermediate <<= FRAC_BITS + INT_BITS;
         //std::cout << "divisor: " << divisor.getRaw() << std::endl;
-        divisor += 0.001; // just so it doesn't divide by zero
+        //divisor += 0.001; // just so it doesn't divide by zero
         intermediate /= divisor.getRaw();
 
-        return ResultType::createRaw(intermediate.template convert_to<RawType>());
+        return ResultType::createRaw(intermediate);
     }
 
     bool isfinite() const
@@ -578,32 +573,19 @@ public:
     FixedPoint<INT_BITS, FRAC_BITS>
         operator/(double divisor) const
     {
-        std::cout << "divisor: " << divisor << std::endl;
-        divisor += 0.001; // just so it doesn't divide by zero
-        std::cout << "divisor: " << divisor << std::endl;
         typedef typename GET_INT_WITH_LENGTH<INT_BITS*2 + FRAC_BITS*2>::RESULT IntermediateType;
 
-        //std::cout << "divisor: " << divisor << std::endl;
-        //divisor += 0.001; // just so it doesn't divide by zero
-        //std::cout << "divisor: " << divisor << std::endl;
-
-        IntermediateType int_frac((max_int)1 << FRAC_BITS);
+        IntermediateType int_frac(1LL << FRAC_BITS);
 
         // Expand the dividend so we don't lose resolution
         IntermediateType intermediate(raw_ * int_frac);
         // Shift the dividend. FRAC_BITS2 cancels with the fractional bits in
         // divisor, and INT_BITS2 adds the required resolution.
         //intermediate <<= FRAC_BITS + INT_BITS;
-        IntermediateType temp_divisor = IntermediateType(divisor);
-        std::cout << "temp_divisor: " << temp_divisor << std::endl;
-        temp_divisor += IntermediateType(0.001); // just so it doesn't divide by zero
-        std::cout << "temp_divisor: " << temp_divisor << std::endl;
-        temp_divisor += 1; // just so it doesn't divide by zero
-        std::cout << "temp_divisor: " << temp_divisor << std::endl;
 
-        intermediate /= temp_divisor;
+        intermediate /= divisor;
 
-        return FixedPoint<INT_BITS, FRAC_BITS>::createRaw(intermediate.template convert_to<RawType>());
+        return FixedPoint<INT_BITS, FRAC_BITS>::createRaw(intermediate);
     }
 
     // /= overload
@@ -611,7 +593,7 @@ public:
     {
         typedef typename GET_INT_WITH_LENGTH<INT_BITS*2 + FRAC_BITS*2>::RESULT IntermediateType;
 
-        IntermediateType int_frac((max_int)1 << FRAC_BITS);
+        IntermediateType int_frac(1LL << FRAC_BITS);
 
         // Expand the dividend so we don't lose resolution
         IntermediateType intermediate(raw_ * int_frac);
@@ -619,11 +601,7 @@ public:
         // divisor, and INT_BITS2 adds the required resolution.
         //intermediate <<= FRAC_BITS + INT_BITS;
 
-        divisor += 0.001; // just so it doesn't divide by zero
-
-        intermediate /= divisor.getRaw();
-
-        raw_ = intermediate.template convert_to<RawType>();
+        intermediate /= divisor;
 
         return *this;
     }
@@ -690,7 +668,7 @@ public:
     /// Get the value truncated to an integer
     IntType getValue() const { return (IntType)(raw_ >> FRAC_BITS); }
     /// Get the value rounded to an integer (only works if FRAC_BITS > 0)
-    RoundType round() const { return (RoundType)((raw_ + (((max_int)1 << FRAC_BITS) - 1)) >> FRAC_BITS); }
+    RoundType round() const { return (RoundType)((raw_ + ((1 << FRAC_BITS) - 1)) >> FRAC_BITS); }
     /// Returns the raw internal binary contents
     RawType getRaw() const { return raw_; }
 
