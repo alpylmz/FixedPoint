@@ -90,8 +90,8 @@ public:
             if (is_neg){
                 value = -value;
             }
-            raw_ = value * (1 << FRAC_BITS);
-            mask = (1LL << (FRAC_BITS+INT_BITS)) - 1;
+            raw_ = value * ((__int128_t)1 << FRAC_BITS);
+            mask = ((__int128_t)1 << (FRAC_BITS+INT_BITS)) - 1;
             applyMask();
             if (is_neg){
                 raw_ = -raw_;
@@ -105,7 +105,7 @@ public:
                 raw_ = min_val;
             }
             else{
-                raw_ = value * (1 << FRAC_BITS);
+                raw_ = value * ((__int128_t)1 << FRAC_BITS);
             }
         }
     }
@@ -141,7 +141,7 @@ public:
     /// Default constructor
     FixedPoint(){
         raw_ = 0;
-        mask = (1LL << (FRAC_BITS+INT_BITS)) - 1;
+        mask = ((__int128_t)1 << (FRAC_BITS+INT_BITS)) - 1;
        //applyMask();
     }
 
@@ -550,7 +550,7 @@ public:
         typedef FixedPoint<INT_BITS, FRAC_BITS> ResultType;
         typedef typename GET_INT_WITH_LENGTH<INT_BITS*2 + FRAC_BITS*2>::RESULT IntermediateType;
 
-        IntermediateType int_frac(1 << FRAC_BITS);
+        IntermediateType int_frac((__int128_t)1 << FRAC_BITS);
 
         // Expand the dividend so we don't lose resolution
         IntermediateType intermediate(raw_ * int_frac);
