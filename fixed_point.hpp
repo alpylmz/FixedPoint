@@ -16,19 +16,6 @@ enum OverflowMode
 extern OverflowMode OVERFLOW_MODE;
 
 /// A fixed-point integer type
-/** \tparam INT_BITS The number of bits before the radix point
- *  \tparam FRAC_BITS The number of bits after the radix point
- *  \warning INT_BITS and FRAC_BITS must be non-negative, and their sum cannot exceed 64
- *
- *  Fixed point numbers are signed, so FixedPoint<5,2>, for example, has a
- *  range of -16.00 to +15.75
- *
- *  The internal storage (FixedPoint::raw_) is rounded up to the next highest
- *  power of 2, so a 17 bit number occupies 32 physical bits. Consider that the
- *  multiplication of a 5 bit fixed point (which occupies 8 bits of space) with
- *  an 10 bit fixed point (which occupies 16 bits of space) results in a 15 bit
- *  fixed point which occupies 16 bits of space.
- */
 template <int INT_BITS, int FRAC_BITS>
 struct FixedPoint
 {
@@ -63,8 +50,8 @@ public:
             if (is_neg){
                 value = -value;
             }
-            raw_ = value << FRAC_BITS;
-            mask = (1LL << (FRAC_BITS+INT_BITS)) - 1;
+            raw_ = (__int128_t)value << FRAC_BITS;
+            mask = ((__int128_t)1 << (FRAC_BITS+INT_BITS)) - 1;
             applyMask();
             if (is_neg){
                 raw_ = -raw_;
@@ -78,7 +65,7 @@ public:
                 raw_ = min_val;
             }
             else{
-                raw_ = value << FRAC_BITS;
+                raw_ = (__int128_t)value << FRAC_BITS;
             }
         }
     }
@@ -118,8 +105,8 @@ public:
             if (is_neg){
                 value = -value;
             }
-            raw_ = value * (1 << FRAC_BITS);
-            mask = (1LL << (FRAC_BITS+INT_BITS)) - 1;
+            raw_ = value * ((__int128_t)1 << FRAC_BITS);
+            mask = ((__int128_t)1 << (FRAC_BITS+INT_BITS)) - 1;
             applyMask();
             if (is_neg){
                 raw_ = -raw_;
@@ -133,7 +120,7 @@ public:
                 raw_ = min_val;
             }
             else{
-                raw_ = value * (1 << FRAC_BITS);
+                raw_ = value * ((__int128_t)1 << FRAC_BITS);
             }
         }
     }
@@ -146,7 +133,7 @@ public:
     }
 
     FixedPoint(RawValue value): raw_(value.value) {
-        mask = (((__int128_t)1) << (FRAC_BITS+INT_BITS)) - ((__int128_t)1);
+        mask = ((__int128_t)1 << (FRAC_BITS+INT_BITS)) - ((__int128_t)1);
         //applyMask();
     }
 
@@ -157,10 +144,6 @@ public:
     /// Create a fixed-point with a predefined raw_ value, with no manipulation
     static FixedPoint<INT_BITS, FRAC_BITS> createRaw(RawType aData) { return FixedPoint<INT_BITS, FRAC_BITS>(RawValue(aData)); }
 
-    /// Returns a new fixed-point that reinterprets the binary raw_.
-    /** \warning This should be used sparingly since returns a number whos
-      * value is not the necessarily same.
-      * \note To just move the radix point, rather use LeftShift or RightShift  */
     template <int INT_BITS_NEW, int FRAC_BITS_NEW>
     FixedPoint<INT_BITS_NEW, FRAC_BITS_NEW> reinterpret()
     {
@@ -174,9 +157,6 @@ public:
         return FixedPoint<INT_BITS_NEW, FRAC_BITS>::createRaw(raw_);
     }
 
-    /// Returns a new fixed-point in a new format which is similar in value to the original
-    /** This may result in loss of raw_ if the number of bits for either the
-      * integer or fractional part are less than the original. */
     template <int INT_BITS_NEW, int FRAC_BITS_NEW>
     FixedPoint<INT_BITS_NEW, FRAC_BITS_NEW> convert() const
     {
@@ -191,43 +171,6 @@ public:
                 >:: exec(raw_));
     }
 
-    // This multiplication method also converts the result to a new format
-    // This is mathematically correct, but I don't want it to happen for Eigen compatibility
-    /*
-    /// Multiplication with another fixed-point
-    template <int INT_BITS2, int FRAC_BITS2>
-    FixedPoint<INT_BITS + INT_BITS2, FRAC_BITS + FRAC_BITS2>
-        operator *(FixedPoint<INT_BITS2, FRAC_BITS2> value) const
-    {
-        return FixedPoint<INT_BITS + INT_BITS2, FRAC_BITS + FRAC_BITS2>::createRaw(raw_ * value.getRaw());
-    }
-    */
-   /*
-   FixedPoint<INT_BITS, FRAC_BITS>
-   operator *(FixedPoint<INT_BITS, FRAC_BITS> value) const
-    {
-        int256_t raw_shifted = raw_;
-        int256_t value_shifted = value.getRaw();
-        //int256_t raw_shifted = raw_ << FRAC_BITS;
-        //int256_t value_shifted = value.getRaw() << FRAC_BITS;
-        std::cout << "raw_shifted: " << raw_shifted << std::endl;
-        std::cout << "value_shifted: " << value_shifted << std::endl;
-        int256_t temp = raw_shifted * value_shifted;
-        FixedPoint<INT_BITS*2, FRAC_BITS*2> temp_fp = FixedPoint<INT_BITS*2, FRAC_BITS*2>::createRaw(temp.convert_to<MultType>());
-        std::cout << "temp: " << temp_fp.getRaw() << std::endl;
-        // bitshift temp to the right
-        int256_t temp_raw = temp_fp.getRaw();
-        auto int_part = temp_raw >> (FRAC_BITS*2);
-        auto frac_part = temp_raw & ((1LL << (FRAC_BITS)) - 1);
-        std::cout << "int part: " << int_part << std::endl;
-        std::cout << "frac part: " << frac_part << std::endl;
-        //frac_part >>= FRAC_BITS*2;
-        int256_t result = (int_part << FRAC_BITS) + (frac_part);
-        return FixedPoint<INT_BITS, FRAC_BITS>::createRaw(result.convert_to<RawType>());
-        // Now we need to shift the radix point back to the original position
-        //return temp.template convert<INT_BITS, FRAC_BITS>();
-    }
-    */
     // https://vanhunteradams.com/FixedPoint/FixedPoint.html
     FixedPoint<INT_BITS, FRAC_BITS>
     operator *(FixedPoint<INT_BITS, FRAC_BITS> value) const
@@ -255,14 +198,13 @@ public:
                 return FixedPoint<INT_BITS, FRAC_BITS>::createRaw(mult.convert_to<RawType>());
             }
         }
-        //return FixedPoint<INT_BITS, FRAC_BITS>::createRaw(mult.convert_to<RawType>());
     }
     // Multiplication with an integer
     // The intermediate type is set to some arbitrary value, there may be a better way to do this
     FixedPoint<INT_BITS, FRAC_BITS> operator *(int value) const
     {
         auto temp = FixedPoint<INT_BITS*2, FRAC_BITS*2>::createRaw(raw_ * value);
-        // Now we need to shift the radix point back to the original position
+
         return temp.template convert<INT_BITS, FRAC_BITS>();
     }
 
@@ -668,7 +610,7 @@ public:
     /// Get the value truncated to an integer
     IntType getValue() const { return (IntType)(raw_ >> FRAC_BITS); }
     /// Get the value rounded to an integer (only works if FRAC_BITS > 0)
-    RoundType round() const { return (RoundType)((raw_ + ((1 << FRAC_BITS) - 1)) >> FRAC_BITS); }
+    RoundType round() const { return (RoundType)((raw_ + ((1LL << FRAC_BITS) - 1)) >> FRAC_BITS); }
     /// Returns the raw internal binary contents
     RawType getRaw() const { return raw_; }
 
