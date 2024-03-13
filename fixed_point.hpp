@@ -309,6 +309,11 @@ public:
         return *this + FixedPoint<INT_BITS, FRAC_BITS>(value);
     }
 
+    FixedPoint<INT_BITS, FRAC_BITS> operator +(double value) const
+    {
+        return *this + FixedPoint<INT_BITS, FRAC_BITS>(value);
+    }
+
     ThisType& operator+=(FixedPoint<INT_BITS, FRAC_BITS> value)
     {
         raw_ += value.template convert<INT_BITS, FRAC_BITS>().getRaw();
