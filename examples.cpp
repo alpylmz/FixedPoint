@@ -4,6 +4,7 @@
 
 #define PRINT_VAL(VAL) std::cout << #VAL << ":\t" << (VAL) << std::endl
 
+OverflowMode OVERFLOW_MODE = OverflowMode::CLAMP;
 
 
 void assignment_test(){
@@ -37,6 +38,11 @@ void assignment_test(){
     std::cout << "g: " << g << std::endl;
     FixedPoint<2, 2> h = 70;
     std::cout << "h: " << h << std::endl;
+    //!!!!!!
+    FixedPoint<6, 10> div_test = 0.028;
+    std::cout << "div_test: " << div_test << std::endl;
+    std::cout << "div_test: " << FixedPoint<6, 10>(1)/div_test << std::endl;
+    
 }
 
 

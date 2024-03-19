@@ -30,37 +30,37 @@ struct GET_INT_WITH_LENGTH
 };
 
 template <>
-struct GET_INT_WITH_LENGTH<8>
+struct GET_INT_WITH_LENGTH<7>
 {
     typedef int8_t RESULT;
 };
 
 template <>
-struct GET_INT_WITH_LENGTH<16>
+struct GET_INT_WITH_LENGTH<15>
 {
     typedef int16_t RESULT;
 };
 
 template <>
-struct GET_INT_WITH_LENGTH<32>
+struct GET_INT_WITH_LENGTH<31>
 {
     typedef int32_t RESULT;
 };
 
 template <>
-struct GET_INT_WITH_LENGTH<64>
+struct GET_INT_WITH_LENGTH<63>
 {
     typedef int64_t RESULT;
 };
 
 template <>
-struct GET_INT_WITH_LENGTH<128>
+struct GET_INT_WITH_LENGTH<127>
 {
     typedef __int128_t RESULT;
 };
 
 template <>
-struct GET_INT_WITH_LENGTH<256>
+struct GET_INT_WITH_LENGTH<255>
 {
     typedef TooManyBits RESULT;
 };

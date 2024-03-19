@@ -5,7 +5,7 @@
 
 OverflowMode OVERFLOW_MODE = OverflowMode::CLAMP;
 
-#define CURR_TYPE FixedPoint<8, 8>
+#define CURR_TYPE FixedPoint<12, 16>
 
 bool double_equals(double a, double b, double epsilon = 0.01){
     return std::abs(a - b) < epsilon;

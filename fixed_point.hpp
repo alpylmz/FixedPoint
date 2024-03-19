@@ -506,7 +506,11 @@ public:
         //intermediate <<= FRAC_BITS + INT_BITS;
         //std::cout << "divisor: " << divisor.getRaw() << std::endl;
         //divisor += 0.001; // just so it doesn't divide by zero
+        //std::cout << "intermediate: " << intermediate << std::endl;
+        //std::cout << "divisor: " << divisor.getRaw() << std::endl;
         intermediate /= divisor.getRaw();
+
+        //std::cout << "intermediate: " << intermediate << std::endl;
 
         return ResultType::createRaw(intermediate);
     }
@@ -610,8 +614,11 @@ public:
     int getFractionalLength() const { return FRAC_BITS; }
     /// Get the value as a floating point
     double getValueF() const { 
+        //std::cout << "raw_ is " << raw_ << std::endl;
+        //std::cout << "1LL << FRAC_BITS is " << (1LL << FRAC_BITS) << std::endl;
         //std::cout << "double val is " << (raw_)/(double)(1LL << FRAC_BITS) << std::endl;
-        return (raw_)/(double)(1LL << FRAC_BITS); }
+        return (raw_)/(double)(1LL << FRAC_BITS); 
+    }
     /// Get the value truncated to an integer
     IntType getValue() const { return (IntType)(raw_ >> FRAC_BITS); }
     /// Get the value rounded to an integer (only works if FRAC_BITS > 0)
