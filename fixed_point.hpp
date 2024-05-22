@@ -158,6 +158,20 @@ public:
     }
 
     template <int INT_BITS_NEW, int FRAC_BITS_NEW>
+    FixedPoint<INT_BITS_NEW, FRAC_BITS_NEW> cast()
+    {
+        // use getValueF() to convert to double
+        return FixedPoint<INT_BITS_NEW, FRAC_BITS_NEW>(getValueF());
+    }
+    
+    // cast to a new type
+    template <typename T>
+    T cast()
+    {
+        return T(getValueF());
+    }
+
+    template <int INT_BITS_NEW, int FRAC_BITS_NEW>
     FixedPoint<INT_BITS_NEW, FRAC_BITS_NEW> convert() const
     {
         typedef typename FixedPoint<INT_BITS_NEW, FRAC_BITS_NEW>::RawType TargetRawType;
@@ -171,9 +185,9 @@ public:
                 >:: exec(raw_));
     }
 
+
     // https://vanhunteradams.com/FixedPoint/FixedPoint.html
-    FixedPoint<INT_BITS, FRAC_BITS>
-    operator *(FixedPoint<INT_BITS, FRAC_BITS> value) const
+    FixedPoint<INT_BITS, FRAC_BITS> operator*(FixedPoint<INT_BITS, FRAC_BITS> value) const
     {
         int256_t raw_shifted = raw_;
         int256_t value_shifted = value.getRaw();
@@ -199,9 +213,9 @@ public:
             }
         }
     }
-    // Multiplication with an integer
+
     // The intermediate type is set to some arbitrary value, there may be a better way to do this
-    FixedPoint<INT_BITS, FRAC_BITS> operator *(int value) const
+    FixedPoint<INT_BITS, FRAC_BITS> operator*(int value) const
     {
         auto temp = FixedPoint<INT_BITS*2, FRAC_BITS*2>::createRaw(raw_ * value);
 
@@ -209,7 +223,7 @@ public:
     }
 
     // Multiplication with a double
-    FixedPoint<INT_BITS, FRAC_BITS> operator *(double value) const
+    FixedPoint<INT_BITS, FRAC_BITS> operator*(double value) const
     {
         auto temp = FixedPoint<INT_BITS*2, FRAC_BITS*2>::createRaw(raw_ * value);
         return temp.template convert<INT_BITS, FRAC_BITS>();
@@ -268,15 +282,12 @@ public:
     }
 
 
-    /// Addition with an integer
-    FixedPoint<INT_BITS, FRAC_BITS> operator +(IntType value) const
+    FixedPoint<INT_BITS, FRAC_BITS> operator+(IntType value) const
     {
         return *this + FixedPoint<INT_BITS, FRAC_BITS>(value);
     }
 
-    /// Addition with another fixed point
-    FixedPoint<INT_BITS, FRAC_BITS>
-        operator+(FixedPoint<INT_BITS, FRAC_BITS> value) const
+    FixedPoint<INT_BITS, FRAC_BITS> operator+(FixedPoint<INT_BITS, FRAC_BITS> value) const
     {
         // This is the type of the result
         typedef FixedPoint<INT_BITS, FRAC_BITS> ResultType;
@@ -304,12 +315,12 @@ public:
         }
     }
 
-    FixedPoint<INT_BITS, FRAC_BITS> operator +(float value) const
+    FixedPoint<INT_BITS, FRAC_BITS> operator+(float value) const
     {
         return *this + FixedPoint<INT_BITS, FRAC_BITS>(value);
     }
 
-    FixedPoint<INT_BITS, FRAC_BITS> operator +(double value) const
+    FixedPoint<INT_BITS, FRAC_BITS> operator+(double value) const
     {
         return *this + FixedPoint<INT_BITS, FRAC_BITS>(value);
     }
@@ -360,9 +371,8 @@ public:
         return *this;
     }
 
-    /// Subtraction operator
-    FixedPoint<INT_BITS, FRAC_BITS>
-        operator-(FixedPoint<INT_BITS, FRAC_BITS> value) const
+
+    FixedPoint<INT_BITS, FRAC_BITS> operator-(FixedPoint<INT_BITS, FRAC_BITS> value) const
     {
         // This is the type of the result
         typedef FixedPoint<INT_BITS, FRAC_BITS> ResultType;
@@ -390,7 +400,6 @@ public:
         }
     }
 
-    /// Subtraction operator
     FixedPoint<INT_BITS, FRAC_BITS> operator-(double value) const
     {
         return *this - FixedPoint<INT_BITS, FRAC_BITS>(value);
@@ -403,7 +412,7 @@ public:
     }
 
 
-    bool operator < (FixedPoint<INT_BITS, FRAC_BITS> other) const
+    bool operator< (FixedPoint<INT_BITS, FRAC_BITS> other) const
     {
         // This is the type of the result
         typedef FixedPoint<INT_BITS, FRAC_BITS> ResultType;
@@ -416,7 +425,7 @@ public:
         return op1.getRaw() < op2.getRaw();
     }
 
-    bool operator > (FixedPoint<INT_BITS, FRAC_BITS> other) const
+    bool operator> (FixedPoint<INT_BITS, FRAC_BITS> other) const
     {
         // This is the type of the result
         typedef FixedPoint<INT_BITS, FRAC_BITS> ResultType;
@@ -429,7 +438,7 @@ public:
         return op1.getRaw() > op2.getRaw();
     }
 
-    bool operator >= (FixedPoint<INT_BITS, FRAC_BITS> other) const
+    bool operator>= (FixedPoint<INT_BITS, FRAC_BITS> other) const
     {
         // This is the type of the result
         typedef FixedPoint<INT_BITS, FRAC_BITS> ResultType;
@@ -442,7 +451,7 @@ public:
         return op1.getRaw() >= op2.getRaw();
     }
 
-    bool operator <= (FixedPoint<INT_BITS, FRAC_BITS> other) const
+    bool operator<= (FixedPoint<INT_BITS, FRAC_BITS> other) const
     {
         // This is the type of the result
         typedef FixedPoint<INT_BITS, FRAC_BITS> ResultType;
@@ -455,7 +464,7 @@ public:
         return op1.getRaw() <= op2.getRaw();
     }
 
-    bool operator ==(FixedPoint<INT_BITS, FRAC_BITS> other) const
+    bool operator==(FixedPoint<INT_BITS, FRAC_BITS> other) const
     {
         // This is the type of the result
         typedef FixedPoint<INT_BITS, FRAC_BITS> ResultType;
@@ -468,12 +477,12 @@ public:
         return op1.getRaw() == op2.getRaw();
     }
 
-    bool operator ==(double other) const
+    bool operator==(double other) const
     {
         return getValueF() == other;
     }
 
-    bool operator != (FixedPoint<INT_BITS, FRAC_BITS> other) const
+    bool operator!= (FixedPoint<INT_BITS, FRAC_BITS> other) const
     {
         // This is the type of the result
         typedef FixedPoint<INT_BITS, FRAC_BITS> ResultType;
@@ -486,9 +495,8 @@ public:
         return op1.getRaw() != op2.getRaw();
     }
 
-    /// Divide operator
-    FixedPoint<INT_BITS, FRAC_BITS>
-        operator/(FixedPoint<INT_BITS, FRAC_BITS> divisor) const
+
+    FixedPoint<INT_BITS, FRAC_BITS> operator/(FixedPoint<INT_BITS, FRAC_BITS> divisor) const
     {
         // (A/2^B)/(C/2^D) = (A/C)/2^(B-D);
         // fpm library says the normal fixed-point division is:
@@ -515,14 +523,7 @@ public:
         return ResultType::createRaw(intermediate);
     }
 
-    bool isfinite() const
-    {
-        return true;
-    }
-
-    // Divide with double
-    FixedPoint<INT_BITS, FRAC_BITS>
-        operator/(double divisor) const
+    FixedPoint<INT_BITS, FRAC_BITS> operator/(double divisor) const
     {
         typedef typename GET_INT_WITH_LENGTH<INT_BITS*2 + FRAC_BITS*2>::RESULT IntermediateType;
 
@@ -539,7 +540,6 @@ public:
         return FixedPoint<INT_BITS, FRAC_BITS>::createRaw(intermediate);
     }
 
-    // /= overload
     FixedPoint<INT_BITS, FRAC_BITS>& operator/=(FixedPoint<INT_BITS, FRAC_BITS> divisor)
     {
         typedef typename GET_INT_WITH_LENGTH<INT_BITS*2 + FRAC_BITS*2>::RESULT IntermediateType;
@@ -557,11 +557,6 @@ public:
         return *this;
     }
 
-    // an overload to be used when this type is converted to a double
-    operator double() const
-    {
-        return getValueF();
-    }
 
     FixedPoint<INT_BITS, FRAC_BITS>& operator=(const FixedPoint<INT_BITS, FRAC_BITS> value)
     {
@@ -606,6 +601,30 @@ public:
     std::ostream& emit(std::ostream& os) const
     {
         return os << std::fixed << std::setprecision((FRAC_BITS * 3 + 9) / 10) << getValueF();
+    }
+
+    bool isfinite() const
+    {
+        return true;
+    }
+
+    // an overload to be used when this type is converted to a double
+    operator double() const
+    {
+        return getValueF();
+    }
+
+
+    FixedPoint<INT_BITS, FRAC_BITS> sin() const
+    {
+        // Take the raw value, calculate sin and return it
+        return FixedPoint<INT_BITS, FRAC_BITS>(std::sin(getValueF()));
+    }
+
+    FixedPoint<INT_BITS, FRAC_BITS> cos() const
+    {
+        // Take the raw value, calculate cos and return it
+        return FixedPoint<INT_BITS, FRAC_BITS>(std::cos(getValueF()));
     }
 
     /// For debugging: return the number of bits before the radix
