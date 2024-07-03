@@ -505,6 +505,12 @@ public:
         typedef FixedPoint<INT_BITS, FRAC_BITS> ResultType;
         typedef typename GET_INT_WITH_LENGTH<INT_BITS*2 + FRAC_BITS*2>::RESULT IntermediateType;
 
+        // If the divisor is zero, return the maximum value
+        if (divisor.getRaw() == 0)
+        {
+            std::cerr << "Division by zero happened" << std::endl;
+            return ResultType::createRaw(max_val);
+        }
         IntermediateType int_frac((__int128_t)1 << FRAC_BITS);
 
         // Expand the dividend so we don't lose resolution
@@ -527,6 +533,13 @@ public:
     {
         typedef typename GET_INT_WITH_LENGTH<INT_BITS*2 + FRAC_BITS*2>::RESULT IntermediateType;
 
+        // If the divisor is zero, return the maximum value
+        if (divisor == 0)
+        {
+            std::cerr << "Division by zero happened" << std::endl;
+            return FixedPoint<INT_BITS, FRAC_BITS>::createRaw(max_val);
+        }
+
         IntermediateType int_frac(1LL << FRAC_BITS);
 
         // Expand the dividend so we don't lose resolution
@@ -543,6 +556,14 @@ public:
     FixedPoint<INT_BITS, FRAC_BITS>& operator/=(FixedPoint<INT_BITS, FRAC_BITS> divisor)
     {
         typedef typename GET_INT_WITH_LENGTH<INT_BITS*2 + FRAC_BITS*2>::RESULT IntermediateType;
+
+        // If the divisor is zero, return the maximum value
+        if (divisor.getRaw() == 0)
+        {
+            std::cerr << "Division by zero happened" << std::endl;
+            raw_ = max_val;
+            return *this;
+        }
 
         IntermediateType int_frac(1LL << FRAC_BITS);
 
