@@ -684,7 +684,9 @@ private:
 
     RawType raw_;
     __int128_t mask;
-    __int128_t max_val = (__int128_t)(((int256_t)1 << (FRAC_BITS+INT_BITS-1)) - 1);
+    //__int128_t max_val = (__int128_t)(((int256_t)1 << (FRAC_BITS+INT_BITS-1)) - 1);
+    // int256_t is not working for some systems as expected
+    __int128_t max_val = (__int128_t)(((__int128_t)1 << (FRAC_BITS+INT_BITS-1)) - 1);
     __int128_t min_val = -(__int128_t)(((__int128_t)1 << (FRAC_BITS+INT_BITS-1)));
     double max_val_f = (double)max_val/(1LL << FRAC_BITS);
     double min_val_f = (double)min_val/(1LL << FRAC_BITS);
