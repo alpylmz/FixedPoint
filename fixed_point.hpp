@@ -45,36 +45,27 @@ public:
     /// Create a fixed-point with equivalent integer value
     /** For example in 4.12 fixed-point, the number "2" is 0010.000000000000  */
     FixedPoint(int value){
-        std::cerr << "value is " << value << std::endl;
         if(OVERFLOW_MODE == OverflowMode::MASK){
-            std::cerr << "MASK" << std::endl;
             bool is_neg = value < 0;
-            std::cerr << "is_neg is " << is_neg << std::endl;
             if (is_neg){
                 value = -value;
             }
             raw_ = (__int128_t)value << FRAC_BITS;
-            std::cerr << "raw_ is " << (long long)raw_ << std::endl;
             mask = ((__int128_t)1 << (FRAC_BITS+INT_BITS)) - 1;
-            std::cerr << "mask is " << (long long)mask << std::endl;
             applyMask();
             if (is_neg){
                 raw_ = -raw_;
             }
         }
         else{
-            std::cerr << "CLAMP" << std::endl;
             if(value > max_val){
                 raw_ = max_val;
-                std::cerr << "value > max_val" << std::endl;
             }
             else if(value < min_val){
                 raw_ = min_val;
-                std::cerr << "value < min_val" << std::endl;
             }
             else{
                 raw_ = (__int128_t)value << FRAC_BITS;
-                std::cerr << "raw_ is " << (long long)raw_ << std::endl;
             }
         }
     }
