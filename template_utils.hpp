@@ -56,7 +56,9 @@ struct GET_INT_WITH_LENGTH<63>
 template <>
 struct GET_INT_WITH_LENGTH<127>
 {
-    typedef __int128_t RESULT;
+    //typedef __int128_t RESULT;
+    //typedef TooManyBits RESULT;
+    typedef int64_t RESULT;
 };
 
 template <>

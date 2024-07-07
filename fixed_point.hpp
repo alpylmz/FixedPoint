@@ -50,8 +50,8 @@ public:
             if (is_neg){
                 value = -value;
             }
-            raw_ = (__int128_t)value << FRAC_BITS;
-            mask = ((__int128_t)1 << (FRAC_BITS+INT_BITS)) - 1;
+            raw_ = (int64_t)value << FRAC_BITS;
+            mask = ((int64_t)1 << (FRAC_BITS+INT_BITS)) - 1;
             applyMask();
             if (is_neg){
                 raw_ = -raw_;
@@ -65,7 +65,7 @@ public:
                 raw_ = min_val;
             }
             else{
-                raw_ = (__int128_t)value << FRAC_BITS;
+                raw_ = (int64_t)value << FRAC_BITS;
             }
         }
     }
@@ -77,8 +77,8 @@ public:
             if (is_neg){
                 value = -value;
             }
-            raw_ = value * ((__int128_t)1 << FRAC_BITS);
-            mask = ((__int128_t)1 << (FRAC_BITS+INT_BITS)) - 1;
+            raw_ = value * ((int64_t)1 << FRAC_BITS);
+            mask = ((int64_t)1 << (FRAC_BITS+INT_BITS)) - 1;
             applyMask();
             if (is_neg){
                 raw_ = -raw_;
@@ -92,7 +92,7 @@ public:
                 raw_ = min_val;
             }
             else{
-                raw_ = value * ((__int128_t)1 << FRAC_BITS);
+                raw_ = value * ((int64_t)1 << FRAC_BITS);
             }
         }
     }
@@ -105,8 +105,8 @@ public:
             if (is_neg){
                 value = -value;
             }
-            raw_ = value * ((__int128_t)1 << FRAC_BITS);
-            mask = ((__int128_t)1 << (FRAC_BITS+INT_BITS)) - 1;
+            raw_ = value * ((int64_t)1 << FRAC_BITS);
+            mask = ((int64_t)1 << (FRAC_BITS+INT_BITS)) - 1;
             applyMask();
             if (is_neg){
                 raw_ = -raw_;
@@ -120,7 +120,7 @@ public:
                 raw_ = min_val;
             }
             else{
-                raw_ = value * ((__int128_t)1 << FRAC_BITS);
+                raw_ = value * ((int64_t)1 << FRAC_BITS);
             }
         }
     }
@@ -128,12 +128,12 @@ public:
     /// Default constructor
     FixedPoint(){
         raw_ = 0;
-        mask = ((__int128_t)1 << (FRAC_BITS+INT_BITS)) - 1;
+        mask = ((int64_t)1 << (FRAC_BITS+INT_BITS)) - 1;
        //applyMask();
     }
 
     FixedPoint(RawValue value): raw_(value.value) {
-        mask = ((__int128_t)1 << (FRAC_BITS+INT_BITS)) - ((__int128_t)1);
+        mask = ((int64_t)1 << (FRAC_BITS+INT_BITS)) - ((int64_t)1);
         //applyMask();
     }
 
@@ -511,7 +511,7 @@ public:
             std::cerr << "Division by zero happened" << std::endl;
             return ResultType::createRaw(max_val);
         }
-        IntermediateType int_frac((__int128_t)1 << FRAC_BITS);
+        IntermediateType int_frac((int64_t)1 << FRAC_BITS);
 
         // Expand the dividend so we don't lose resolution
         IntermediateType intermediate(raw_ * int_frac);
@@ -674,11 +674,11 @@ public:
 private:
 
     RawType raw_;
-    __int128_t mask;
-    //__int128_t max_val = (__int128_t)(((int256_t)1 << (FRAC_BITS+INT_BITS-1)) - 1);
+    int64_t mask;
+    //int64_t max_val = (int64_t)(((int256_t)1 << (FRAC_BITS+INT_BITS-1)) - 1);
     // int256_t is not working for some systems as expected
-    __int128_t max_val = (__int128_t)(((__int128_t)1 << (FRAC_BITS+INT_BITS-1)) - 1);
-    __int128_t min_val = -(__int128_t)(((__int128_t)1 << (FRAC_BITS+INT_BITS-1)));
+    int64_t max_val = (int64_t)(((int64_t)1 << (FRAC_BITS+INT_BITS-1)) - 1);
+    int64_t min_val = -(int64_t)(((int64_t)1 << (FRAC_BITS+INT_BITS-1)));
     double max_val_f = (double)max_val/(1LL << FRAC_BITS);
     double min_val_f = (double)min_val/(1LL << FRAC_BITS);
 };
